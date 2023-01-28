@@ -1,0 +1,72 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "ecommerce_real_estateContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": "Context",
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Real_Estate_Context",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[admins]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[customerServices]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[locationImages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[locations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[locationsTypes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[paymentTypes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[projects]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[projects_features]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[visitors]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "(localdb)\\MSSQLLocalDB.ecommerce_real_estate",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
