@@ -477,7 +477,7 @@ namespace RealEstateApi.Controllers
             return Ok();
         }
         #endregion
-
+         
         #region Admin With Visitors        
         [MyAuthorize]
         [Route("SendMailToVisitors")]
