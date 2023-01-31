@@ -8,7 +8,7 @@ namespace Real_Estate_Dtos.DTO
 {
     public class LoginDTO
     {
-        public string userName { get; }
-        public string password { get; }
+        public string userName { get; set; }
+        public string password { get; set; }
     }
 }

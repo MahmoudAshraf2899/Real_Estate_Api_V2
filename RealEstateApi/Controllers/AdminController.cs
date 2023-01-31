@@ -13,10 +13,14 @@ using Real_Estate_IServices;
 using RealEstateApi.Commands;
 using RealEstateApi.Commands.CustomerServices;
 using RealEstateApi.Commands.Locations;
+using RealEstateApi.Commands.LocationsTypes;
+using RealEstateApi.Commands.PaymentTypes;
 using RealEstateApi.Commands.Projects;
 using RealEstateApi.Queries;
 using RealEstateApi.Queries.CustomerServices;
 using RealEstateApi.Queries.Location;
+using RealEstateApi.Queries.LocationTypes;
+using RealEstateApi.Queries.PaymentTypes;
 using RealEstateApi.Queries.Projects;
 using RealEstateApi.Services;
 using System.Drawing;
@@ -192,7 +196,7 @@ namespace RealEstateApi.Controllers
 
         [HttpPost]
         [Route("AdminLogin")]
-        public IActionResult AdminLogin(LoginDTO user)
+        public IActionResult AdminLogin([FromBody] LoginDTO user)
         {
             var client = _context.Admins.Where(c => c.IsDeleted != true && c.IsActive == true && c.UserName == user.userName).FirstOrDefault();
             if (client == null)
@@ -409,31 +413,17 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllLocationsTypes(int pageNumber, int pageSize)
         {
-            var result = await _locationsTypesRepository.GetAllTypes(pageNumber, pageSize);
+            var query = new GetAllTypesQuery(pageNumber, pageSize, _language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
         [MyAuthorize]
         [Route("AddNewLocationType")]
         [HttpPost]
-        public async Task<IActionResult> AddNewLocationType(LocationTypeAddDto dto)
+        public async Task<IActionResult> AddNewLocationType(LocationTypeAddCommand dto)
         {
-            //Check if type is exist before
-            var enIsExist = _locationsTypesRepository.FindBy(c => c.EnType == dto.enType).Any();
-            var arIsExist = _locationsTypesRepository.FindBy(c => c.ArType == dto.arType).Any();
-            if (enIsExist || arIsExist)
-            {
-                return BadRequest("English Name Or Arabic Name Is Exist");
-            }
-            else
-            {
-                LocationsType newType = new LocationsType();
-                newType.EnType = dto.enType;
-                newType.ArType = dto.arType;
-
-                await _locationsTypesRepository.AddAsync(newType);
-                await _locationsTypesRepository.SaveAsync();
-                return Ok(newType);
-            }
+            var result = await _meditor.Send(dto);
+            return Ok(result);
         }
 
         [MyAuthorize]
@@ -441,7 +431,8 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetLocationTypesForDropDown()
         {
-            var result = await _locationsTypesRepository.getDropDown(_language);
+            var query = new GetLocationTypesDropDownQuery(_language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
         #endregion
@@ -452,7 +443,8 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPaymentTypes(int pageNumber, int pageSize)
         {
-            var result = await _paymentTypeRepository.getAllPaymentTypes(pageNumber, pageSize, _language);
+            var query = new GetAllPaymentsTypesQuery(pageNumber, pageSize, _language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
 
@@ -461,23 +453,20 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPaymentTypeDropDown()
         {
-            var result = await _paymentTypeRepository.getForDrop(_language);
+            var query = new GetPaymentsTypesDropDownQuery(_language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
         [MyAuthorize]
         [Route("AddNewPaymentType")]
         [HttpPost]
-        public async Task<IActionResult> AddNewPaymentType(paymentTypeAddDto dto)
+        public async Task<IActionResult> AddNewPaymentType(PaymentTypeAddCommand dto)
         {
-            PaymentType newPaymentType = new PaymentType();
-            newPaymentType.ArType = dto.arType;
-            newPaymentType.EnType = dto.enType;
-            await _paymentTypeRepository.AddAsync(newPaymentType);
-            await _paymentTypeRepository.SaveAsync();
-            return Ok();
+            var result = await _meditor.Send(dto);
+            return Ok(result);
         }
         #endregion
-         
+
         #region Admin With Visitors        
         [MyAuthorize]
         [Route("SendMailToVisitors")]

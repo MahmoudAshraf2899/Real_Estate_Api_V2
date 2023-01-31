@@ -10,7 +10,7 @@ namespace Real_Estate_IServices
 {
     public interface IlocationsTypesRepository : IRepository<LocationsType>
     {
-        Task<List<LocationsTypesGetAllDto>> GetAllTypes(int pageNumber, int pageSize);
+        Task<List<LocationsTypesGetAllDto>> GetAllTypes(int pageNumber, int pageSize, string lang);
         Task<List<locationTypesDropDownDto>> getDropDown(string lang);
     }
 }

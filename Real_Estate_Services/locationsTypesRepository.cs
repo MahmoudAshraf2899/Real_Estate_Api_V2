@@ -13,16 +13,30 @@ namespace Real_Estate_Services
 {
     public class locationsTypesRepository : Repository<ecommerce_real_estateContext, LocationsType>, IlocationsTypesRepository
     {
-        public async Task<List<LocationsTypesGetAllDto>> GetAllTypes(int pageNumber, int pageSize)
+        public async Task<List<LocationsTypesGetAllDto>> GetAllTypes(int pageNumber, int pageSize, string lang)
         {
-            var list = await (from q in Context.LocationsTypes.AsNoTracking()
+            var list = new List<LocationsTypesGetAllDto>();
+            if (lang == "en")
+            {
+                list = await (from q in Context.LocationsTypes.AsNoTracking()
+                              select new LocationsTypesGetAllDto
+                              {
+                                  id = q.Id,
+                                  enName = q.EnType,
+
+                              }).OrderByDescending(c => c.id).Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
+            }
+            else
+            {
+                list = await (from q in Context.LocationsTypes.AsNoTracking()
                               select new LocationsTypesGetAllDto
                               {
                                   id = q.Id,
                                   arName = q.ArType,
-                                  enName = q.EnType,
 
                               }).OrderByDescending(c => c.id).Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
+            }
+
             return list;
         }
 
