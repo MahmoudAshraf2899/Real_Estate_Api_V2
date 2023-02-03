@@ -16,12 +16,14 @@ using RealEstateApi.Commands.Locations;
 using RealEstateApi.Commands.LocationsTypes;
 using RealEstateApi.Commands.PaymentTypes;
 using RealEstateApi.Commands.Projects;
+using RealEstateApi.Commands.Visitors;
 using RealEstateApi.Queries;
 using RealEstateApi.Queries.CustomerServices;
 using RealEstateApi.Queries.Location;
 using RealEstateApi.Queries.LocationTypes;
 using RealEstateApi.Queries.PaymentTypes;
 using RealEstateApi.Queries.Projects;
+using RealEstateApi.Queries.Visitors;
 using RealEstateApi.Services;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -471,7 +473,7 @@ namespace RealEstateApi.Controllers
         [MyAuthorize]
         [Route("SendMailToVisitors")]
         [HttpPost]
-        public IActionResult SendMailToVisitors(EmailFigureDto dto)
+        public async Task<IActionResult> SendMailToVisitors(SendMailToVisitorsCommand dto)
         {
             //Only Super Admin Who Can Use This Feature
             if (_isSuberAdmin != true)
@@ -480,37 +482,8 @@ namespace RealEstateApi.Controllers
             }
             else
             {
-                //Get All Visitors Emails
-                var visitorsList = _context.Visitors.AsNoTracking().Where(c => c.IsActive != false).ToList();
-                foreach (var item in visitorsList)
-                {
-                    try
-                    {
-                        using (var client = new SmtpClient())
-                        {
-                            var message = new MailMessage();
-                            message.To.Add(new MailAddress(item.Email));//Make It to all Visitors which they are Active
-                            message.From = new MailAddress("mahmodashrf79@gmail.com", "Real Estate");//Move To AppSettings
-
-                            message.Subject = dto.subject;
-                            message.Body = dto.body;
-
-                            client.Host = "smtp.gmail.com";
-                            client.Port = 587;
-                            client.UseDefaultCredentials = false;
-                            client.Credentials = new NetworkCredential("mahmodashrf79@gmail.com", "vohoaanrrbqkoaww");//Move To AppSettings
-                            client.EnableSsl = true;
-                            client.Send(message);
-                        }
-                    }
-
-                    catch (Exception ex)
-                    {
-
-                        throw;
-                    }
-                }
-                return Ok();
+                var result = await _meditor.Send(dto);
+                return Ok(result);
             }
         }
 
@@ -519,7 +492,9 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVisitors(int pageNumber, int pageSize)
         {
-            var result = await _visitorRepository.getAllVisitors(pageNumber, pageSize, _language);
+            //Todo : Implement Caching
+            var query = new GetAllVisitorsQuery(pageNumber, pageSize, _language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
 
@@ -528,31 +503,19 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVisitorById(int id)
         {
-            var result = await _visitorRepository.getvisitorById(id, _language);
+            var query = new GetVisitorByIdQuery(id, _language);
+            var result = await _meditor.Send(query);
             return Ok(result);
         }
 
         [MyAuthorize]
         [Route("AddVisitorByAdmin")]
         [HttpPost]
-        public async Task<IActionResult> AddVisitorByAdmin(VisitorAddDto dto)
+        public async Task<IActionResult> AddVisitorByAdmin(VisitorAddCommand dto)
         {
-            Visitor newVisitor = new Visitor();
-            newVisitor.IsActive = true;
-            newVisitor.CreatedBy = _accountId;
-            newVisitor.Email = dto.email;
-            newVisitor.ContactNameEn = dto.enContactName;
-            newVisitor.ContactNameAr = dto.arContactName;
-            newVisitor.UserName = dto.userName;
-            newVisitor.GroupPermission = 3;
-            newVisitor.CreatedAt = DateTime.Now.Date;
-            newVisitor.Mobile = dto.mobile;
-            newVisitor.SecMobile = dto.secMobile;
-            newVisitor.Password = "12345";
-
-            await _visitorRepository.AddAsync(newVisitor);
-            await _visitorRepository.SaveAsync();
-            return Ok(dto);
+            dto.createdBy = _accountId;
+            var result = await _meditor.Send(dto);
+            return Ok(result);
         }
 
         [MyAuthorize]
@@ -560,24 +523,9 @@ namespace RealEstateApi.Controllers
         [HttpPost]
         public async Task<IActionResult> BlockVisitorByAdmin(int id)
         {
-            //Get visitor by Id 
-            var _obj = _visitorRepository.FindBy(c => c.Id == id).FirstOrDefault();
-            if (_obj is not null)
-            {
-                _obj.DeletedBy = _accountId;
-                _obj.IsDeleted = true;
-                _obj.IsActive = false;
-
-                await _visitorRepository.UpdateAsync(_obj);
-                await _visitorRepository.SaveAsync();
-                return Ok();
-
-            }
-            else
-            {
-                return BadRequest();
-            }
-
+            var command = new VisitorBlockCommand(id, _accountId);
+            var result = await _meditor.Send(command);
+            return Ok(result);            
         }
 
         #endregion

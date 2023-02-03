@@ -13,6 +13,16 @@ namespace Real_Estate_Services
 {
     public class VisitorRepository : Repository<ecommerce_real_estateContext, Visitor>, IVisitorRepository
     {
+        public async Task<List<VisitorsEmailsDto>> getAllActiveVisitorsEmails()
+        {
+            var list = await (from q in Context.Visitors.AsNoTracking().Where(c => c.IsActive != false)
+                              select new VisitorsEmailsDto
+                              {
+                                  email = q.Email
+                              }).ToListAsync();
+            return list;
+        }
+
         public async Task<List<VisitorsGetAllDto>> getAllVisitors(int pageNumber, int pageSize, string lang)
         {
             var list = new List<VisitorsGetAllDto>();
@@ -48,7 +58,7 @@ namespace Real_Estate_Services
             var list = new VisitorsGetByIdDto();
             if (lang == "en")
             {
-                list = await (from q in Context.Visitors.AsNoTracking().Where(c => c.Id == id && c.IsActive == true)
+                list = await (from q in Context.Visitors.AsNoTracking().Where(c => c.Id == id && c.IsActive != false)
                               let creatorName = q.CreatedBy != null ? q.CreatedByNavigation.ContactNameEn : "Normal Visitor"
                               select new VisitorsGetByIdDto
                               {
@@ -81,5 +91,7 @@ namespace Real_Estate_Services
             }
             return list;
         }
+
+
     }
 }

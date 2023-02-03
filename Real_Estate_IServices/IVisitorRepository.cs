@@ -12,5 +12,6 @@ namespace Real_Estate_IServices
     {
         Task<List<VisitorsGetAllDto>> getAllVisitors(int pageNumber, int pageSize, string lang);
         Task<VisitorsGetByIdDto> getvisitorById(int id, string lang);
+        Task<List<VisitorsEmailsDto>> getAllActiveVisitorsEmails();
     }
 }
