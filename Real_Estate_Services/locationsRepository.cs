@@ -13,6 +13,21 @@ namespace Real_Estate_Services
 {
     public class locationsRepository : Repository<ecommerce_real_estateContext, Location>, IlocationsRepository
     {
+
+        public async Task<List<LocationsGetAllDtoEncapsulationTest>> getAllLocationsTest()
+        {
+            var list = new List<LocationsGetAllDtoEncapsulationTest>();
+             
+                list = await(from q in Context.Locations.AsNoTracking().Where(c => c.IsActive != false && c.DeletedyBy == null)
+                             let addedBy = q.AddedByNavigation.ContactNameEn
+                             let projectName = q.Project.NameEn
+                             select new LocationsGetAllDtoEncapsulationTest(q.Price)
+                             {
+                                  Price = q.Price
+                             }).ToListAsync();
+            return list;
+            
+        }
         public async Task<List<LocationsGetAllDto>> getAllLocations(int pageNumber, int pageSize, string lang)
         {
             var list = new List<LocationsGetAllDto>();
@@ -51,6 +66,8 @@ namespace Real_Estate_Services
             }
             return list;
         }
+
+        
 
         public async Task<LocationByIdDto> getById(int id, string lang)
         {

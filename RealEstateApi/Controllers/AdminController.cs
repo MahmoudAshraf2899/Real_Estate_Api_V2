@@ -50,6 +50,7 @@ namespace RealEstateApi.Controllers
         private readonly IPaymentTypeRepository _paymentTypeRepository;
         private readonly ILocationImageRepository _locationImageRepository;
         private readonly IVisitorRepository _visitorRepository;
+        private readonly IlocationsRepository _locationsRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediator _meditor;
         private readonly ecommerce_real_estateContext _context;
@@ -64,6 +65,7 @@ namespace RealEstateApi.Controllers
             IPaymentTypeRepository paymentTypeRepository,
             ILocationImageRepository locationImageRepository,
             IVisitorRepository visitorRepository,
+            IlocationsRepository locationsRepository,
             IMemoryCache cache,
             IMediator meditor,
             ecommerce_real_estateContext context)
@@ -77,6 +79,7 @@ namespace RealEstateApi.Controllers
             _paymentTypeRepository = paymentTypeRepository;
             _locationImageRepository = locationImageRepository;
             _visitorRepository = visitorRepository;
+            _locationsRepository = locationsRepository;
             _cache = cache;
             _meditor = meditor;
             _context = context;
@@ -352,8 +355,12 @@ namespace RealEstateApi.Controllers
         [MyAuthorize]
         [Route("GetAllLocationsByAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAllLocationsByAdmin(int pageNumber, int pageSize)
+        public async Task<IActionResult> GetAllLocationsByAdmin(int pageNumber,int pageSize)
         {
+            #region Encapsulation Test
+            //var result = await _locationsRepository.getAllLocationsTest();
+            //return Ok(result); 
+            #endregion
             var query = new GetAllLocationsQuery(pageNumber, pageSize, _language);
             var result = await _meditor.Send(query);
             return Ok(result);

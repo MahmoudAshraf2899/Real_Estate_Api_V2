@@ -11,6 +11,8 @@ namespace Real_Estate_IServices
     public interface IlocationsRepository : IRepository<Location>
     {
         Task<List<LocationsGetAllDto>> getAllLocations(int pageNumber, int pageSize,string lang);
+        Task<List<LocationsGetAllDtoEncapsulationTest>> getAllLocationsTest();
+
         Task<LocationByIdDto> getById(int id,string lang);
     }
 }

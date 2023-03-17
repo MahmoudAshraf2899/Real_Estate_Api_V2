@@ -14,8 +14,32 @@ namespace Real_Estate_Dtos.DTO
         public double? Price { get; set; }
         public double? area { get; set; }
         public string projectName { get; set; }
-        public string addedByName { get; set; }        
+        public string addedByName { get; set; }
         public bool? isAvailable { get; set; }
+
+    }
+    public class LocationsGetAllDtoEncapsulationTest
+    {
+        private double? _price;
+        public double? Price
+        {
+            get
+            {
+                return _price;
+            }
+            set
+            {
+                this._price = processValue(value);
+            }
+        }
+        public LocationsGetAllDtoEncapsulationTest(double? price)
+        {
+            _price = price;
+        }
+        private double? processValue(double? value) => value <= 0 ? 0 : value;
+
+
+
 
     }
 }
