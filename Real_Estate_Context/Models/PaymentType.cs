@@ -25,6 +25,8 @@ namespace Real_Estate_Context.Models
         [Column("enType")]
         [StringLength(50)]
         public string EnType { get; set; }
+        [Column("code")]
+        public short? Code { get; set; }
 
         [InverseProperty("PaymentType")]
         public virtual ICollection<Location> Locations { get; set; }
