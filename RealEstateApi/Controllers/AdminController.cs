@@ -544,9 +544,9 @@ namespace RealEstateApi.Controllers
         [Route("UploadExcelData")]
         public IActionResult UploadExcelData(IFormFile file)
         {
-            var data = ReadExcelData(file);
+            //var data = ReadExcelData(file);
 
-            return Ok(data);
+            return Ok();
         }
 
        
