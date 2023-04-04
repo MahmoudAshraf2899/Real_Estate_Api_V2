@@ -40,6 +40,14 @@ namespace Real_Estate_Context.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.HasOne(d => d.Supervisor)
+                    .WithMany(p => p.InverseSupervisor)
+                    .HasForeignKey(d => d.SupervisorId)
+                    .HasConstraintName("FK_admins_supervisor");
+            });
+
             modelBuilder.Entity<CustomerService>(entity =>
             {
                 entity.HasOne(d => d.CreatedByNavigation)

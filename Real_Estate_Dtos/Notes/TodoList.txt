@@ -1,0 +1,1 @@
+﻿1- Make Trigger If User Is Super Admin So Make (isSales == true)

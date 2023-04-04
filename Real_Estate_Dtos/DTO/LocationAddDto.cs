@@ -10,6 +10,7 @@ namespace Real_Estate_Dtos.DTO
     {
         public string locationNameAr { get; set; }
         public string locationNameEn { get; set; }
+        public string projectName { get; set; }
         public bool? isAvailable { get; set; }
         public short? noRooms { get; set; }
         public short? noBathRooms { get; set; }

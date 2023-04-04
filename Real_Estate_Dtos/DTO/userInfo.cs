@@ -12,5 +12,7 @@ namespace Real_Estate_Dtos.DTO
         public short? groupId { get; set; }
         public string userName { get; set; }
         public bool? isSuperAdmin { get; set; }        
+        public bool? isSuperVisor { get; set; }        
+        public bool? isSalesMan { get; set; }        
     }
 }

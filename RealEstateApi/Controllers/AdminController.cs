@@ -1,9 +1,5 @@
-﻿using ClosedXML.Excel;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -27,12 +23,7 @@ using RealEstateApi.Queries.Projects;
 using RealEstateApi.Queries.Visitors;
 using RealEstateApi.Services;
 using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 
@@ -59,6 +50,8 @@ namespace RealEstateApi.Controllers
         private int _accountId;
         private string _language;
         private bool? _isSuberAdmin;
+        private bool? _isSuperVisor;
+        private bool? _isSalesMan;
         public AdminController(IHttpContextAccessor accessor, IConfiguration config,
             IAdminRepository adminRepository,
             IProjectsRepository projectsRepository,
@@ -112,8 +105,9 @@ namespace RealEstateApi.Controllers
                     if (userInfo.id != 0)
                     {
                         _accountId = userInfo.id;
-
+                        _isSuperVisor = userInfo.isSuperVisor;
                         _isSuberAdmin = userInfo.isSuperAdmin;
+                        _isSalesMan = userInfo.isSalesMan;
                     }
                 }
             }
@@ -224,7 +218,7 @@ namespace RealEstateApi.Controllers
 
         }
 
-        [MyAuthorizeAttribute]
+        [MyAuthorize]
         [HttpGet]
         [Route("GetAllAdmins")]
         public async Task<IActionResult> GetAllAdmins(int pageNumber, int pageSize)
@@ -415,6 +409,16 @@ namespace RealEstateApi.Controllers
                 return NoContent();
         }
 
+        [MyAuthorize]
+        [HttpPost]
+        [Route("UploadExcelData")]
+        public async Task<IActionResult> UploadExcelData(IFormFile file)
+        {
+            var query = new LocationUploadExcelCommand(file,_accountId);
+            var result = await _meditor.Send(query);
+            return Ok(result);
+        }
+
         #endregion
 
         #region Admin With Location Type
@@ -539,20 +543,13 @@ namespace RealEstateApi.Controllers
 
 
         #endregion
-        [Authorize]
-        [HttpPost]
-        [Route("UploadExcelData")]
-        public IActionResult UploadExcelData(IFormFile file)
-        {
-            //var data = ReadExcelData(file);
-
-            return Ok();
-        }
-
        
+        #region AdmiwnWithSales
 
 
-       
+
+        #endregion
+
     }
 
 }

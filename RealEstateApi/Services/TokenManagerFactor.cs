@@ -1,4 +1,5 @@
-﻿using Real_Estate_Context.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Real_Estate_Context.Context;
 using Real_Estate_Dtos.DTO;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,13 +21,17 @@ namespace RealEstateApi.Services
             if (sub != null)
             {
                 using var context = new ecommerce_real_estateContext();
-                account = context.Admins.Where(x => x.IsDeleted != true && dns.Value == x.GroupPermission.ToString() && x.UserName == sub.Value && x.IsActive == true)
+                account = context.Admins.Where(x => x.IsDeleted != true &&
+                                                    dns.Value == x.GroupPermission.ToString() &&
+                                                    x.UserName == sub.Value &&
+                                                    x.IsActive == true)
                 .Select(x => new UserInfo
                 {
                     id = x.Id,
                     userName = x.UserName,
                     groupId = x.GroupPermission,
-                    isSuperAdmin = x.IsSuperAdmin
+                    isSuperAdmin = x.IsSuperAdmin,
+
 
                 }).FirstOrDefault();
 
@@ -35,6 +40,18 @@ namespace RealEstateApi.Services
 
                     return new UserInfo();
                 }
+                //Check If User Is Supevisor on another account
+                var isSuperVisor = context.Admins.AsNoTracking().Where(c => c.SupervisorId == account.id).Any();
+                var isSalesMan = context.Admins.AsNoTracking().Where(c => c.Id == account.id && c.IsSales == true)
+                                                              .FirstOrDefault();
+                if (isSuperVisor)
+                {
+                    account.isSuperVisor = true;
+                }
+                if(isSalesMan != null)
+                {
+                    account.isSalesMan = true;
+                }
                 return account;
             }
 
@@ -42,6 +59,6 @@ namespace RealEstateApi.Services
         }
         //Todo : Create Get CustomerServicesInfoCore
         //Todo : Create Get VistiorInfoCore
-         
+
     }
 }

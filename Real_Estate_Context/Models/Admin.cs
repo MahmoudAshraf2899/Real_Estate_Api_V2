@@ -15,6 +15,7 @@ namespace Real_Estate_Context.Models
         {
             CustomerServiceCreatedByNavigations = new HashSet<CustomerService>();
             CustomerServiceEditedByNavigations = new HashSet<CustomerService>();
+            InverseSupervisor = new HashSet<Admin>();
             LocationAddedByNavigations = new HashSet<Location>();
             LocationEditedByNavigations = new HashSet<Location>();
             ProjectAddedByNavigations = new HashSet<Project>();
@@ -56,11 +57,20 @@ namespace Real_Estate_Context.Models
         [Column("profilePicture")]
         [StringLength(500)]
         public string ProfilePicture { get; set; }
+        [Column("supervisorId")]
+        public int? SupervisorId { get; set; }
+        [Column("isSales")]
+        public bool? IsSales { get; set; }
 
+        [ForeignKey("SupervisorId")]
+        [InverseProperty("InverseSupervisor")]
+        public virtual Admin Supervisor { get; set; }
         [InverseProperty("CreatedByNavigation")]
         public virtual ICollection<CustomerService> CustomerServiceCreatedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
         public virtual ICollection<CustomerService> CustomerServiceEditedByNavigations { get; set; }
+        [InverseProperty("Supervisor")]
+        public virtual ICollection<Admin> InverseSupervisor { get; set; }
         [InverseProperty("AddedByNavigation")]
         public virtual ICollection<Location> LocationAddedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]

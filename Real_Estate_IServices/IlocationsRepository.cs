@@ -1,4 +1,5 @@
-﻿using Real_Estate_Context.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Real_Estate_Context.Models;
 using Real_Estate_Dtos.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace Real_Estate_IServices
 {
     public interface IlocationsRepository : IRepository<Location>
     {
-        Task<List<LocationsGetAllDto>> getAllLocations(int pageNumber, int pageSize,string lang);
+        Task<List<LocationsGetAllDto>> getAllLocations(int pageNumber, int pageSize, string lang);
         Task<List<LocationsGetAllDtoEncapsulationTest>> getAllLocationsTest();
-
-        Task<LocationByIdDto> getById(int id,string lang);
+        Task<LocationByIdDto> getById(int id, string lang);
+        void ReadExcelData(IFormFile file,int accountId);
     }
 }
