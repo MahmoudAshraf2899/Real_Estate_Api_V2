@@ -25,8 +25,11 @@ namespace Real_Estate_Context.Context
         public virtual DbSet<LocationImage> LocationImages { get; set; }
         public virtual DbSet<LocationsType> LocationsTypes { get; set; }
         public virtual DbSet<PaymentType> PaymentTypes { get; set; }
+        public virtual DbSet<Permission> Permissions { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<ProjectsFeature> ProjectsFeatures { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<RolesPermission> RolesPermissions { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -42,6 +45,11 @@ namespace Real_Estate_Context.Context
         {
             modelBuilder.Entity<Admin>(entity =>
             {
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Admins)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_admins_roles");
+
                 entity.HasOne(d => d.Supervisor)
                     .WithMany(p => p.InverseSupervisor)
                     .HasForeignKey(d => d.SupervisorId)
@@ -102,6 +110,14 @@ namespace Real_Estate_Context.Context
                     .HasConstraintName("FK_locationImages_locations");
             });
 
+            modelBuilder.Entity<Permission>(entity =>
+            {
+                entity.HasOne(d => d.CreatedByNavigation)
+                    .WithMany(p => p.PermissionCreatedByNavigations)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .HasConstraintName("FK_permissions_admins_CreatedBy");
+            });
+
             modelBuilder.Entity<Project>(entity =>
             {
                 entity.Property(e => e.NoUnits).HasDefaultValueSql("((0))");
@@ -128,6 +144,19 @@ namespace Real_Estate_Context.Context
                     .WithMany(p => p.ProjectsFeatures)
                     .HasForeignKey(d => d.ProjectId)
                     .HasConstraintName("FK_projects_features_projects");
+            });
+
+            modelBuilder.Entity<RolesPermission>(entity =>
+            {
+                entity.HasOne(d => d.Permission)
+                    .WithMany(p => p.RolesPermissions)
+                    .HasForeignKey(d => d.PermissionId)
+                    .HasConstraintName("FK_roles_Permissions_permissions");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.RolesPermissions)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_roles_Permissions_roles");
             });
 
             modelBuilder.Entity<Visitor>(entity =>

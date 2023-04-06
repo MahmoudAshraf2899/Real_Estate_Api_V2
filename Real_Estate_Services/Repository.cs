@@ -124,5 +124,6 @@ namespace Real_Estate_Services
             var query = _entities.Set<T>().Where(predicate);
             return query;
         }
+       
     }
 }

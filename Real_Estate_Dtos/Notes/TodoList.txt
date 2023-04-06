@@ -1,1 +1,2 @@
 ﻿1- Make Trigger If User Is Super Admin So Make (isSales == true)
+2- Implement CQRS On Admin Region

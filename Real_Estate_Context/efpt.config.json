@@ -39,11 +39,23 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[permissions]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[projects]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[projects_features]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[roles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[roles_Permissions]",
          "ObjectType": 0
       },
       {

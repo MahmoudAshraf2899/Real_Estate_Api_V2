@@ -18,9 +18,13 @@ namespace Real_Estate_Context.Models
             InverseSupervisor = new HashSet<Admin>();
             LocationAddedByNavigations = new HashSet<Location>();
             LocationEditedByNavigations = new HashSet<Location>();
+            PermissionCreatedByNavigations = new HashSet<Permission>();
+            PermissionUpdatedByNavigations = new HashSet<Permission>();
             ProjectAddedByNavigations = new HashSet<Project>();
             ProjectDeletedByNavigations = new HashSet<Project>();
             ProjectEditedByNavigations = new HashSet<Project>();
+            RoleCreatedByNavigations = new HashSet<Role>();
+            RoleUpdatedByNavigations = new HashSet<Role>();
             Visitors = new HashSet<Visitor>();
         }
 
@@ -61,7 +65,12 @@ namespace Real_Estate_Context.Models
         public int? SupervisorId { get; set; }
         [Column("isSales")]
         public bool? IsSales { get; set; }
+        [Column("roleId")]
+        public int? RoleId { get; set; }
 
+        [ForeignKey("RoleId")]
+        [InverseProperty("Admins")]
+        public virtual Role Role { get; set; }
         [ForeignKey("SupervisorId")]
         [InverseProperty("InverseSupervisor")]
         public virtual Admin Supervisor { get; set; }
@@ -75,12 +84,20 @@ namespace Real_Estate_Context.Models
         public virtual ICollection<Location> LocationAddedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
         public virtual ICollection<Location> LocationEditedByNavigations { get; set; }
+        [InverseProperty("CreatedByNavigation")]
+        public virtual ICollection<Permission> PermissionCreatedByNavigations { get; set; }
+        [InverseProperty("UpdatedByNavigation")]
+        public virtual ICollection<Permission> PermissionUpdatedByNavigations { get; set; }
         [InverseProperty("AddedByNavigation")]
         public virtual ICollection<Project> ProjectAddedByNavigations { get; set; }
         [InverseProperty("DeletedByNavigation")]
         public virtual ICollection<Project> ProjectDeletedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
         public virtual ICollection<Project> ProjectEditedByNavigations { get; set; }
+        [InverseProperty("CreatedByNavigation")]
+        public virtual ICollection<Role> RoleCreatedByNavigations { get; set; }
+        [InverseProperty("UpdatedByNavigation")]
+        public virtual ICollection<Role> RoleUpdatedByNavigations { get; set; }
         [InverseProperty("DeletedByNavigation")]
         public virtual ICollection<Visitor> Visitors { get; set; }
     }

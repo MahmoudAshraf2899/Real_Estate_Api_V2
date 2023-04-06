@@ -11,6 +11,7 @@ using RealEstateApi.Commands;
 using RealEstateApi.Commands.CustomerServices;
 using RealEstateApi.Commands.Locations;
 using RealEstateApi.Commands.LocationsTypes;
+using RealEstateApi.Commands.Login;
 using RealEstateApi.Commands.PaymentTypes;
 using RealEstateApi.Commands.Projects;
 using RealEstateApi.Commands.Visitors;
@@ -44,6 +45,9 @@ namespace RealEstateApi.Controllers
         private readonly ILocationImageRepository _locationImageRepository;
         private readonly IVisitorRepository _visitorRepository;
         private readonly IlocationsRepository _locationsRepository;
+        private readonly IRolesRepository _rolesRepository;
+        private readonly IPermissionsRepository _permissionsRepository;
+        private readonly IRolesPermissionsRepository _rolesPermissionsRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediator _meditor;
         private readonly ecommerce_real_estateContext _context;
@@ -61,6 +65,9 @@ namespace RealEstateApi.Controllers
             ILocationImageRepository locationImageRepository,
             IVisitorRepository visitorRepository,
             IlocationsRepository locationsRepository,
+            IRolesRepository rolesRepository,
+            IPermissionsRepository permissionsRepository,
+            IRolesPermissionsRepository rolesPermissionsRepository,
             IMemoryCache cache,
             IMediator meditor,
             ecommerce_real_estateContext context)
@@ -75,6 +82,9 @@ namespace RealEstateApi.Controllers
             _locationImageRepository = locationImageRepository;
             _visitorRepository = visitorRepository;
             _locationsRepository = locationsRepository;
+            _rolesRepository = rolesRepository;
+            _permissionsRepository = permissionsRepository;
+            _rolesPermissionsRepository = rolesPermissionsRepository;
             _cache = cache;
             _meditor = meditor;
             _context = context;
@@ -116,38 +126,6 @@ namespace RealEstateApi.Controllers
         }
 
         #region Authorization && Authentication
-
-        private object GenerateAdminToken(Admin info)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var iss = "Seven Seas Server";
-
-            var claims = new[] {
-                new Claim(ClaimTypes.Email, info.UserName),
-                new Claim(ClaimTypes.Actor, iss),
-                new Claim(ClaimTypes.Version, info.Id.ToString()),
-                new Claim(ClaimTypes.Hash, Guid.NewGuid().ToString("D")),
-                new Claim(ClaimTypes.Dns, info.GroupPermission.ToString()),
-
-             };
-            //Let Token Expires After Three Days
-            var token = new JwtSecurityToken(expires: DateTime.Now.AddDays(3), claims: claims, signingCredentials: credentials);
-
-            var tokenValid = new JwtSecurityTokenHandler().WriteToken(token);
-
-            var result = new
-            {
-                access_token = tokenValid,
-                iss = "api/Nightmare",
-                sub = info.UserName,
-                spi = info.GroupPermission.ToString(),
-                acn = info.ContactNameEn,
-                aci = info.Id.ToString(),
-            };
-            return result;
-        }
 
         [MyAuthorize]
         [HttpPost]
@@ -195,26 +173,53 @@ namespace RealEstateApi.Controllers
             }
         }
 
+
         [HttpPost]
         [Route("AdminLogin")]
-        public IActionResult AdminLogin([FromBody] LoginDTO user)
+        public async Task<IActionResult> AdminLogin(AdminLoginCommand request)
         {
-            var client = _context.Admins.Where(c => c.IsDeleted != true && c.IsActive == true && c.UserName == user.userName).FirstOrDefault();
-            if (client == null)
-            {
-                return BadRequest("Invalid User Name : " + user.userName);
-            }
+            var result = await _meditor.Send(request);
 
-            if (client != null)
+            if (result == "InvalidPassword")
+                return BadRequest();
+
+            if (result == "UserNotFound")
+                return BadRequest();
+
+
+            return Ok(result);
+        }
+        private bool isAllow(int code)
+        {
+            //Get User Role
+            var userRole = _adminRepository.FindBy(c => c.Id == _accountId).Select(c => c.RoleId)
+                                                                           .FirstOrDefault();
+            //Get Role Permissions
+            var userRolePermissions = _rolesPermissionsRepository.FindBy(c => c.RoleId == userRole)
+                                                                 .Select(c => c.PermissionId)
+                                                                 .ToList();
+
+
+            List<int?> permissionsIds = new List<int?>();
+            if (userRolePermissions != null)
             {
-                var checkPassword = PasswordHash.CreateHash(user.password);
-                if (!PasswordHash.ValidatePassword(user.password, client.Password))
+                foreach (var item in userRolePermissions)
                 {
-                    return BadRequest("Wrong User's Password.");
+                    var getPermissionByCode = _permissionsRepository.FindBy(c => c.Id == item).Select(c => c.Code).FirstOrDefault();
+                    if (getPermissionByCode == code)
+                    {
+                        return true;
+                        break;
+
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
                 }
             }
-
-            return Ok(GenerateAdminToken(client));
+            return true;
 
         }
 
@@ -223,8 +228,23 @@ namespace RealEstateApi.Controllers
         [Route("GetAllAdmins")]
         public async Task<IActionResult> GetAllAdmins(int pageNumber, int pageSize)
         {
-            var result = await _adminRepository.getAllAdmins(pageNumber, pageSize, _language);
-            return Ok(result);
+            /*
+             * 11 Refert to View All Admins Permission
+             * if(user.IsAllow(11)){
+             * then return result
+             * else return unAuthorized
+             * }
+             */
+            if (isAllow(1))
+            {
+
+                var result = await _adminRepository.getAllAdmins(pageNumber, pageSize, _language);
+                return Ok(result);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
         #endregion
 
@@ -414,7 +434,7 @@ namespace RealEstateApi.Controllers
         [Route("UploadExcelData")]
         public async Task<IActionResult> UploadExcelData(IFormFile file)
         {
-            var query = new LocationUploadExcelCommand(file,_accountId);
+            var query = new LocationUploadExcelCommand(file, _accountId);
             var result = await _meditor.Send(query);
             return Ok(result);
         }
@@ -543,7 +563,7 @@ namespace RealEstateApi.Controllers
 
 
         #endregion
-       
+
         #region AdmiwnWithSales
 
 

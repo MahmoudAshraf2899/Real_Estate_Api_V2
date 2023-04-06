@@ -47,6 +47,9 @@ builder.Services.AddTransient<IlocationsTypesRepository, locationsTypesRepositor
 builder.Services.AddTransient<IPaymentTypeRepository, paymentTypeRepository>();
 builder.Services.AddTransient<ILocationImageRepository, LocationImageRepository>();
 builder.Services.AddTransient<IVisitorRepository, VisitorRepository>();
+builder.Services.AddTransient<IRolesRepository, RolesRepository>();
+builder.Services.AddTransient<IPermissionsRepository, PermissionsRepository>();
+builder.Services.AddTransient<IRolesPermissionsRepository, RolesPermissionsRepository>();
 builder.Services.AddSingleton<MemoryCacheService>();
 
 //builder.Services.AddHttpClient();
