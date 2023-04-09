@@ -2,31 +2,30 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
-using Microsoft.IdentityModel.Tokens;
 using Real_Estate_Context.Context;
-using Real_Estate_Context.Models;
-using Real_Estate_Dtos.DTO;
 using Real_Estate_IServices;
 using RealEstateApi.Commands;
+using RealEstateApi.Commands.AdminCommand;
 using RealEstateApi.Commands.CustomerServices;
 using RealEstateApi.Commands.Locations;
 using RealEstateApi.Commands.LocationsTypes;
 using RealEstateApi.Commands.Login;
 using RealEstateApi.Commands.PaymentTypes;
 using RealEstateApi.Commands.Projects;
+using RealEstateApi.Commands.Roles;
 using RealEstateApi.Commands.Visitors;
 using RealEstateApi.Queries;
+using RealEstateApi.Queries.Admin;
 using RealEstateApi.Queries.CustomerServices;
 using RealEstateApi.Queries.Location;
 using RealEstateApi.Queries.LocationTypes;
 using RealEstateApi.Queries.PaymentTypes;
 using RealEstateApi.Queries.Projects;
+using RealEstateApi.Queries.Roles;
 using RealEstateApi.Queries.Visitors;
 using RealEstateApi.Services;
 using System.Data;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace RealEstateApi.Controllers
 {
@@ -124,52 +123,88 @@ namespace RealEstateApi.Controllers
             #endregion
 
         }
+        #region Private Methods
+        /// <summary>
+        /// This boolean method to check that user has permission to access specific data by passing 
+        /// Code and check if this code exist in permission table or not
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        private bool isAllow(int code)
+        {
+            //Get User Role
+            var userObj = _adminRepository.FindBy(c => c.Id == _accountId).Select(c => new { c.RoleId, c.IsSuperAdmin })
+                                                                           .FirstOrDefault();
+            if (userObj.IsSuperAdmin == true)
+            {
+                return true;
+            }
+            else
+            {
+
+                var permissionId = _permissionsRepository.FindBy(c => c.Code == code).Select(c => c.Id).FirstOrDefault();
+
+                var isActive = _rolesPermissionsRepository.FindBy(c => c.PermissionId == permissionId && c.RoleId == userObj.RoleId && c.IsActive == true).Any();
+                if (isActive)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            #region Old Code
+            ////Get Role Permissions
+            //var userRolePermissions = _rolesPermissionsRepository.FindBy(c => c.RoleId == userRole)
+            //                                                     .Select(c => c.PermissionId)
+            //                                                     .ToList();
+            ////Todo : Check if this permission is Active for this Role or Not
+            //if (userRolePermissions != null)
+            //{
+            //    foreach (var item in userRolePermissions)
+            //    {
+            //        var getPermissionByCode = _permissionsRepository.FindBy(c => c.Id == item).Select(c => new { c.Id, c.Code }).FirstOrDefault();
+
+            //        if (getPermissionByCode.Code == code)
+            //        {
+            //            return true;
+            //            break;
+
+            //        }
+            //        else
+            //        {
+            //            continue;
+            //        }
+
+            //    }
+            //}
+            //return true; 
+            #endregion
+
+        }
+        #endregion
 
         #region Authorization && Authentication
 
         [MyAuthorize]
         [HttpPost]
         [Route("AddNewAdmin")]
-        public async Task<IActionResult> AddNewAdmin(DtoRegister model)
+        public async Task<IActionResult> AddNewAdmin(AddNewAdminCommand command)
         {
-
             if (_isSuberAdmin != true)
             {
                 return BadRequest();
             }
             else
-            {
-                //First : Check If User Name is Exist in Visitor Table
-                bool isExist = _context.Admins.Where(C => C.UserName == model.userName).Any();
-                if (isExist)
-                {
-                    string userNameAlert = "User Name is Already Exist";
-                    //User Already Exist
-                    return BadRequest(userNameAlert);
-                }
-                //Second : Check If Passwords Matches
-                string passwordMatching = "Password Doesn't Match";
-                if (model.password != model.confirmPassword)
-                {
-                    return BadRequest(passwordMatching);
-                }
-                //Third : Add Operation
-                #region Admin
-                Admin newAdmin = new Admin();
-                newAdmin.Email = model.email;
-                newAdmin.CreatedAt = DateTime.Now.Date;
-                newAdmin.CreatedBy = _accountId;
-                newAdmin.UserName = model.userName;
-                newAdmin.ContactNameEn = model.contactNameEn;
-                newAdmin.ContactNameAr = model.contactNameAr;
-                newAdmin.IsActive = true;
-                newAdmin.GroupPermission = 1;
-                newAdmin.Password = PasswordHash.CreateHash(model.password);
-
-                await _context.Admins.AddAsync(newAdmin);
-                await _context.SaveChangesAsync();
-                #endregion
-                return Ok();
+            {                
+                command.accountId = _accountId;
+                var result = await _meditor.Send(command);
+                if (result == "User Name is Already Exist" || result == "Password Doesn't Match")
+                    return BadRequest();
+                else
+                    return Ok(result);
+               
             }
         }
 
@@ -189,56 +224,17 @@ namespace RealEstateApi.Controllers
 
             return Ok(result);
         }
-        private bool isAllow(int code)
-        {
-            //Get User Role
-            var userRole = _adminRepository.FindBy(c => c.Id == _accountId).Select(c => c.RoleId)
-                                                                           .FirstOrDefault();
-            //Get Role Permissions
-            var userRolePermissions = _rolesPermissionsRepository.FindBy(c => c.RoleId == userRole)
-                                                                 .Select(c => c.PermissionId)
-                                                                 .ToList();
 
-
-            List<int?> permissionsIds = new List<int?>();
-            if (userRolePermissions != null)
-            {
-                foreach (var item in userRolePermissions)
-                {
-                    var getPermissionByCode = _permissionsRepository.FindBy(c => c.Id == item).Select(c => c.Code).FirstOrDefault();
-                    if (getPermissionByCode == code)
-                    {
-                        return true;
-                        break;
-
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
-                }
-            }
-            return true;
-
-        }
 
         [MyAuthorize]
         [HttpGet]
         [Route("GetAllAdmins")]
         public async Task<IActionResult> GetAllAdmins(int pageNumber, int pageSize)
         {
-            /*
-             * 11 Refert to View All Admins Permission
-             * if(user.IsAllow(11)){
-             * then return result
-             * else return unAuthorized
-             * }
-             */
             if (isAllow(1))
             {
-
-                var result = await _adminRepository.getAllAdmins(pageNumber, pageSize, _language);
+                var query = new GetAllAdminsQuery(pageNumber, pageSize, _language);
+                var result = await _meditor.Send(query);
                 return Ok(result);
             }
             else
@@ -564,9 +560,40 @@ namespace RealEstateApi.Controllers
 
         #endregion
 
-        #region AdmiwnWithSales
+        #region Work With Roles and Permissions
 
+        [MyAuthorize]
+        [HttpGet]
+        [Route("GetAllRolesDropDownlistForAdmin")]
 
+        public async Task<IActionResult> GetAllRolesDropDownlistForAdmin()
+        {
+            var query = new GetRolesForDropDownForAdminQuery();
+            var result = await _meditor.Send(query);
+            return Ok(result);
+        }
+
+        [MyAuthorize]
+        [HttpGet]
+        [Route("GetAllRolesPermissionsForAdmin")]
+        public async Task<IActionResult> GetAllRolesPermissionsForAdmin(int roleId)
+        {
+            var query = new GetRolePermissionsForAdminQuery(roleId);
+            var result = await _meditor.Send(query);
+            return Ok(result);
+        }
+        [MyAuthorize]
+        [HttpPost]
+        [Route("UpdateRolePermissonByAdmin")]
+        public async Task<IActionResult> UpdateRolePermissonByAdmin(List<updateRolesPermissionsByAdminCommand> dto)
+        {
+            object? result = new object();
+            foreach (var item in dto)
+            {
+                result = await _meditor.Send(item);
+            }
+            return Ok();
+        }
 
         #endregion
 

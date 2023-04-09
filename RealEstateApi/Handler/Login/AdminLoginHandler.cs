@@ -20,7 +20,7 @@ namespace RealEstateApi.Handler.Login
             _adminRepository = adminRepository;
             _config = config;
         }
-        private object GenerateAdminToken(Admin info)
+        private object GenerateAdminToken(Real_Estate_Context.Models.Admin info)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

@@ -18,6 +18,8 @@ namespace Real_Estate_Context.Models
         public int? RoleId { get; set; }
         [Column("permissionId")]
         public int? PermissionId { get; set; }
+        [Column("isActive")]
+        public bool? IsActive { get; set; }
 
         [ForeignKey("PermissionId")]
         [InverseProperty("RolesPermissions")]

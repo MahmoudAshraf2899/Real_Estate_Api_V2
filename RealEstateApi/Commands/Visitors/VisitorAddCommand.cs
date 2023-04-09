@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using Real_Estate_Context.Models;
-using Real_Estate_Dtos.DTO;
 
 namespace RealEstateApi.Commands.Visitors
 {
