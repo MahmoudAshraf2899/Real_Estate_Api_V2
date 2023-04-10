@@ -20,6 +20,7 @@ namespace Real_Estate_Context.Context
         }
 
         public virtual DbSet<Admin> Admins { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerService> CustomerServices { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<LocationImage> LocationImages { get; set; }
@@ -28,6 +29,7 @@ namespace Real_Estate_Context.Context
         public virtual DbSet<Permission> Permissions { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<ProjectsFeature> ProjectsFeatures { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<RolesPermission> RolesPermissions { get; set; }
         public virtual DbSet<Visitor> Visitors { get; set; }
@@ -144,6 +146,14 @@ namespace Real_Estate_Context.Context
                     .WithMany(p => p.ProjectsFeatures)
                     .HasForeignKey(d => d.ProjectId)
                     .HasConstraintName("FK_projects_features_projects");
+            });
+
+            modelBuilder.Entity<Reservation>(entity =>
+            {
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.Reservations)
+                    .HasForeignKey(d => d.LocationId)
+                    .HasConstraintName("FK_reservation_location_locationId");
             });
 
             modelBuilder.Entity<RolesPermission>(entity =>

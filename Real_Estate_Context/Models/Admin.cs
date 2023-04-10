@@ -15,6 +15,7 @@ namespace Real_Estate_Context.Models
         {
             CustomerServiceCreatedByNavigations = new HashSet<CustomerService>();
             CustomerServiceEditedByNavigations = new HashSet<CustomerService>();
+            Customers = new HashSet<Customer>();
             InverseSupervisor = new HashSet<Admin>();
             LocationAddedByNavigations = new HashSet<Location>();
             LocationEditedByNavigations = new HashSet<Location>();
@@ -23,6 +24,7 @@ namespace Real_Estate_Context.Models
             ProjectAddedByNavigations = new HashSet<Project>();
             ProjectDeletedByNavigations = new HashSet<Project>();
             ProjectEditedByNavigations = new HashSet<Project>();
+            Reservations = new HashSet<Reservation>();
             RoleCreatedByNavigations = new HashSet<Role>();
             RoleUpdatedByNavigations = new HashSet<Role>();
             Visitors = new HashSet<Visitor>();
@@ -78,6 +80,8 @@ namespace Real_Estate_Context.Models
         public virtual ICollection<CustomerService> CustomerServiceCreatedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
         public virtual ICollection<CustomerService> CustomerServiceEditedByNavigations { get; set; }
+        [InverseProperty("CreatedByNavigation")]
+        public virtual ICollection<Customer> Customers { get; set; }
         [InverseProperty("Supervisor")]
         public virtual ICollection<Admin> InverseSupervisor { get; set; }
         [InverseProperty("AddedByNavigation")]
@@ -94,6 +98,8 @@ namespace Real_Estate_Context.Models
         public virtual ICollection<Project> ProjectDeletedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
         public virtual ICollection<Project> ProjectEditedByNavigations { get; set; }
+        [InverseProperty("CreatedByNavigation")]
+        public virtual ICollection<Reservation> Reservations { get; set; }
         [InverseProperty("CreatedByNavigation")]
         public virtual ICollection<Role> RoleCreatedByNavigations { get; set; }
         [InverseProperty("UpdatedByNavigation")]

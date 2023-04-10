@@ -19,6 +19,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[customer]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[customerServices]",
          "ObjectType": 0
       },
@@ -48,6 +52,10 @@
       },
       {
          "Name": "[dbo].[projects_features]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[reservation]",
          "ObjectType": 0
       },
       {

@@ -50,6 +50,7 @@ builder.Services.AddTransient<IVisitorRepository, VisitorRepository>();
 builder.Services.AddTransient<IRolesRepository, RolesRepository>();
 builder.Services.AddTransient<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddTransient<IRolesPermissionsRepository, RolesPermissionsRepository>();
+builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
 builder.Services.AddSingleton<MemoryCacheService>();
 
 //builder.Services.AddHttpClient();

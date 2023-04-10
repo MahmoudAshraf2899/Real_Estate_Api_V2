@@ -12,6 +12,7 @@ using RealEstateApi.Commands.LocationsTypes;
 using RealEstateApi.Commands.Login;
 using RealEstateApi.Commands.PaymentTypes;
 using RealEstateApi.Commands.Projects;
+using RealEstateApi.Commands.Reservation;
 using RealEstateApi.Commands.Roles;
 using RealEstateApi.Commands.Visitors;
 using RealEstateApi.Queries;
@@ -21,6 +22,7 @@ using RealEstateApi.Queries.Location;
 using RealEstateApi.Queries.LocationTypes;
 using RealEstateApi.Queries.PaymentTypes;
 using RealEstateApi.Queries.Projects;
+using RealEstateApi.Queries.Reservation;
 using RealEstateApi.Queries.Roles;
 using RealEstateApi.Queries.Visitors;
 using RealEstateApi.Services;
@@ -197,14 +199,14 @@ namespace RealEstateApi.Controllers
                 return BadRequest();
             }
             else
-            {                
+            {
                 command.accountId = _accountId;
                 var result = await _meditor.Send(command);
                 if (result == "User Name is Already Exist" || result == "Password Doesn't Match")
                     return BadRequest();
                 else
                     return Ok(result);
-               
+
             }
         }
 
@@ -593,6 +595,45 @@ namespace RealEstateApi.Controllers
                 result = await _meditor.Send(item);
             }
             return Ok();
+        }
+
+        #endregion
+
+
+        #region Reservation
+        [MyAuthorize]
+        [HttpGet]
+        [Route("GetAllReservations")]
+        public async Task<IActionResult> GetAllReservations(int pageNumber, int pageSize)
+        {
+            if (isAllow(3))
+            {
+                var query = new GetAllReservationsQuery(pageNumber, pageSize, _language);
+                var result = await _meditor.Send(query);
+                return Ok(result);
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
+        [MyAuthorize]
+        [HttpPost]
+        [Route("AddNewLocaionReservation")]
+        public async Task<IActionResult> AddNewLocaionReservation(AddNewReservationCommand command)
+        {
+            if (isAllow(4))
+            {
+
+                command.accountId = _accountId;
+                var result = await _meditor.Send(command);
+                return Ok(result);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         #endregion

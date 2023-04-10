@@ -14,6 +14,7 @@ namespace Real_Estate_Context.Models
         public Location()
         {
             LocationImages = new HashSet<LocationImage>();
+            Reservations = new HashSet<Reservation>();
         }
 
         [Key]
@@ -84,5 +85,7 @@ namespace Real_Estate_Context.Models
         public virtual Project Project { get; set; }
         [InverseProperty("Location")]
         public virtual ICollection<LocationImage> LocationImages { get; set; }
+        [InverseProperty("Location")]
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }
