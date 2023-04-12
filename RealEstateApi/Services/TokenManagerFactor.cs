@@ -11,51 +11,61 @@ namespace RealEstateApi.Services
     {
         public static UserInfo GetAdminUserInfo(IIdentity token)
         {
-            var identity = (ClaimsIdentity)token;
-            List<Claim> claims = identity.Claims.ToList();
-            var account = new UserInfo();
-
-            var sub = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
-            var dns = claims.FirstOrDefault(x => x.Type == ClaimTypes.Dns);//To Get PermissionId
-
-            if (sub != null)
+            try
             {
-                using var context = new ecommerce_real_estateContext();
-                account = context.Admins.Where(x => x.IsDeleted != true &&
-                                                    dns.Value == x.GroupPermission.ToString() &&
-                                                    x.UserName == sub.Value &&
-                                                    x.IsActive == true)
-                .Select(x => new UserInfo
+                var identity = (ClaimsIdentity)token;
+                List<Claim> claims = identity.Claims.ToList();
+                var account = new UserInfo();
+
+                var sub = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
+                var dns = claims.FirstOrDefault(x => x.Type == ClaimTypes.Dns);//To Get PermissionId
+
+                if (sub != null)
                 {
-                    id = x.Id,
-                    userName = x.UserName,
-                    groupId = x.GroupPermission,
-                    isSuperAdmin = x.IsSuperAdmin,
+                    using var context = new ecommerce_real_estateContext();
+                    account = context.Admins.Where(x => x.IsDeleted != true &&
+                                                        dns.Value == x.GroupPermission.ToString() &&
+                                                        x.UserName == sub.Value &&
+                                                        x.IsActive == true)
+                    .Select(x => new UserInfo
+                    {
+                        id = x.Id,
+                        userName = x.UserName,
+                        groupId = x.GroupPermission,
+                        isSuperAdmin = x.IsSuperAdmin,
 
 
-                }).FirstOrDefault();
+                    }).FirstOrDefault();
 
-                if (account == null)
-                {
+                    if (account == null)
+                    {
 
-                    return new UserInfo();
+                        return new UserInfo();
+                    }
+                    //Check If User Is Supevisor on another account
+                    var isSuperVisor = context.Admins.AsNoTracking().Where(c => c.SupervisorId == account.id).Any();
+                    var isSalesMan = context.Admins.AsNoTracking().Where(c => c.Id == account.id && c.IsSales == true)
+                                                                  .FirstOrDefault();
+                    if (isSuperVisor)
+                    {
+                        account.isSuperVisor = true;
+                    }
+                    if (isSalesMan != null)
+                    {
+                        account.isSalesMan = true;
+                    }
+                    return account;
                 }
-                //Check If User Is Supevisor on another account
-                var isSuperVisor = context.Admins.AsNoTracking().Where(c => c.SupervisorId == account.id).Any();
-                var isSalesMan = context.Admins.AsNoTracking().Where(c => c.Id == account.id && c.IsSales == true)
-                                                              .FirstOrDefault();
-                if (isSuperVisor)
-                {
-                    account.isSuperVisor = true;
-                }
-                if(isSalesMan != null)
-                {
-                    account.isSalesMan = true;
-                }
+
                 return account;
             }
+            catch (Exception ex)
+            {
+                UserInfo info = new UserInfo();
+                info.userName = ex.Message;
+                return info;
 
-            return account;
+            }
         }
         //Todo : Create Get CustomerServicesInfoCore
         //Todo : Create Get VistiorInfoCore

@@ -215,16 +215,24 @@ namespace RealEstateApi.Controllers
         [Route("AdminLogin")]
         public async Task<IActionResult> AdminLogin(AdminLoginCommand request)
         {
-            var result = await _meditor.Send(request);
+            try
+            {
+                var result = await _meditor.Send(request);
 
-            if (result == "InvalidPassword")
-                return BadRequest();
+                if (result == "InvalidPassword")
+                    return BadRequest();
 
-            if (result == "UserNotFound")
-                return BadRequest();
+                if (result == "UserNotFound")
+                    return BadRequest();
 
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+                throw;
+            }
         }
 
 
