@@ -50,13 +50,13 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("AddedBy")]
         [InverseProperty("ProjectAddedByNavigations")]
-        public virtual Admin AddedByNavigation { get; set; }
+        public virtual User AddedByNavigation { get; set; }
         [ForeignKey("DeletedBy")]
         [InverseProperty("ProjectDeletedByNavigations")]
-        public virtual Admin DeletedByNavigation { get; set; }
+        public virtual User DeletedByNavigation { get; set; }
         [ForeignKey("EditedBy")]
         [InverseProperty("ProjectEditedByNavigations")]
-        public virtual Admin EditedByNavigation { get; set; }
+        public virtual User EditedByNavigation { get; set; }
         [InverseProperty("Project")]
         public virtual ICollection<Location> Locations { get; set; }
         [InverseProperty("Project")]

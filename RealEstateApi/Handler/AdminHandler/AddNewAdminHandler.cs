@@ -1,7 +1,4 @@
 ﻿using MediatR;
-using Microsoft.Identity.Client;
-using NuGet.Protocol.Plugins;
-using Real_Estate_Context.Models;
 using Real_Estate_IServices;
 using RealEstateApi.Commands.AdminCommand;
 using RealEstateApi.Services;
@@ -35,7 +32,7 @@ namespace RealEstateApi.Handler.AdminHandler
             }
             //Third : Add Operation
             #region Admin
-            Real_Estate_Context.Models.Admin newAdmin = new Real_Estate_Context.Models.Admin();
+            Real_Estate_Context.Models.User newAdmin = new Real_Estate_Context.Models.User();
             newAdmin.Email = request.email;
             newAdmin.CreatedAt = DateTime.Now.Date;
             newAdmin.CreatedBy = request.accountId;

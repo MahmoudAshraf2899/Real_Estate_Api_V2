@@ -13,8 +13,8 @@ namespace Real_Estate_Context.Models
     {
         public Role()
         {
-            Admins = new HashSet<Admin>();
             RolesPermissions = new HashSet<RolesPermission>();
+            Users = new HashSet<User>();
         }
 
         [Key]
@@ -39,13 +39,13 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("CreatedBy")]
         [InverseProperty("RoleCreatedByNavigations")]
-        public virtual Admin CreatedByNavigation { get; set; }
+        public virtual User CreatedByNavigation { get; set; }
         [ForeignKey("UpdatedBy")]
         [InverseProperty("RoleUpdatedByNavigations")]
-        public virtual Admin UpdatedByNavigation { get; set; }
-        [InverseProperty("Role")]
-        public virtual ICollection<Admin> Admins { get; set; }
+        public virtual User UpdatedByNavigation { get; set; }
         [InverseProperty("Role")]
         public virtual ICollection<RolesPermission> RolesPermissions { get; set; }
+        [InverseProperty("Role")]
+        public virtual ICollection<User> Users { get; set; }
     }
 }

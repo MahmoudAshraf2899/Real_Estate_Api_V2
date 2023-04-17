@@ -28,7 +28,7 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("CreatedBy")]
         [InverseProperty("Reservations")]
-        public virtual Admin CreatedByNavigation { get; set; }
+        public virtual User CreatedByNavigation { get; set; }
         [ForeignKey("CustomerId")]
         [InverseProperty("Reservations")]
         public virtual Customer Customer { get; set; }

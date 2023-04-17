@@ -67,10 +67,10 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("CreatedBy")]
         [InverseProperty("CustomerServiceCreatedByNavigations")]
-        public virtual Admin CreatedByNavigation { get; set; }
+        public virtual User CreatedByNavigation { get; set; }
         [ForeignKey("EditedBy")]
         [InverseProperty("CustomerServiceEditedByNavigations")]
-        public virtual Admin EditedByNavigation { get; set; }
+        public virtual User EditedByNavigation { get; set; }
         [InverseProperty("DeletedyByNavigation")]
         public virtual ICollection<Location> Locations { get; set; }
         [InverseProperty("CreatedByNavigation")]

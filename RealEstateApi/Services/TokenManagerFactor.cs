@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Real_Estate_Context.Context;
 using Real_Estate_Dtos.DTO;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -23,7 +22,7 @@ namespace RealEstateApi.Services
                 if (sub != null)
                 {
                     using var context = new ecommerce_real_estateContext();
-                    account = context.Admins.Where(x => x.IsDeleted != true &&
+                    account = context.Users.Where(x => x.IsDeleted != true &&
                                                         dns.Value == x.GroupPermission.ToString() &&
                                                         x.UserName == sub.Value &&
                                                         x.IsActive == true)
@@ -43,8 +42,8 @@ namespace RealEstateApi.Services
                         return new UserInfo();
                     }
                     //Check If User Is Supevisor on another account
-                    var isSuperVisor = context.Admins.AsNoTracking().Where(c => c.SupervisorId == account.id).Any();
-                    var isSalesMan = context.Admins.AsNoTracking().Where(c => c.Id == account.id && c.IsSales == true)
+                    var isSuperVisor = context.Users.AsNoTracking().Where(c => c.SupervisorId == account.id).Any();
+                    var isSalesMan = context.Users.AsNoTracking().Where(c => c.Id == account.id && c.IsSales == true)
                                                                   .FirstOrDefault();
                     if (isSuperVisor)
                     {

@@ -67,13 +67,13 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("AddedBy")]
         [InverseProperty("LocationAddedByNavigations")]
-        public virtual Admin AddedByNavigation { get; set; }
+        public virtual User AddedByNavigation { get; set; }
         [ForeignKey("DeletedyBy")]
         [InverseProperty("Locations")]
         public virtual CustomerService DeletedyByNavigation { get; set; }
         [ForeignKey("EditedBy")]
         [InverseProperty("LocationEditedByNavigations")]
-        public virtual Admin EditedByNavigation { get; set; }
+        public virtual User EditedByNavigation { get; set; }
         [ForeignKey("LocationTypeId")]
         [InverseProperty("Locations")]
         public virtual LocationsType LocationType { get; set; }

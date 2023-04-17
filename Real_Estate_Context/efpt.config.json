@@ -15,10 +15,6 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[admins]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[customer]",
          "ObjectType": 0
       },
@@ -67,11 +63,35 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[users]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[visitors]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[work_flow]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[work_flow_contacts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[work_flow_cycle]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[work_flow_cycle_assessment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[work_flow_following_user]",
          "ObjectType": 0
       }
    ],
-   "UiHint": "(localdb)\\MSSQLLocalDB.ecommerce_real_estate",
+   "UiHint": "laptop-7cd7vv3c\\sql2019.ecommerce_real_estate.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

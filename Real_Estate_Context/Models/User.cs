@@ -8,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Real_Estate_Context.Models
 {
-    [Table("admins")]
-    public partial class Admin
+    [Table("users")]
+    public partial class User
     {
-        public Admin()
+        public User()
         {
             CustomerServiceCreatedByNavigations = new HashSet<CustomerService>();
             CustomerServiceEditedByNavigations = new HashSet<CustomerService>();
             Customers = new HashSet<Customer>();
-            InverseSupervisor = new HashSet<Admin>();
+            InverseSupervisor = new HashSet<User>();
             LocationAddedByNavigations = new HashSet<Location>();
             LocationEditedByNavigations = new HashSet<Location>();
             PermissionCreatedByNavigations = new HashSet<Permission>();
@@ -28,6 +28,13 @@ namespace Real_Estate_Context.Models
             RoleCreatedByNavigations = new HashSet<Role>();
             RoleUpdatedByNavigations = new HashSet<Role>();
             Visitors = new HashSet<Visitor>();
+            WorkFlowContactDeletedByNavigations = new HashSet<WorkFlowContact>();
+            WorkFlowContactUsers = new HashSet<WorkFlowContact>();
+            WorkFlowCreatedByNavigations = new HashSet<WorkFlow>();
+            WorkFlowCycleAssessmentActionByAccs = new HashSet<WorkFlowCycleAssessment>();
+            WorkFlowCycleAssessmentUsers = new HashSet<WorkFlowCycleAssessment>();
+            WorkFlowDeletedByNavigations = new HashSet<WorkFlow>();
+            WorkFlowFollowingUsers = new HashSet<WorkFlowFollowingUser>();
         }
 
         [Key]
@@ -71,11 +78,11 @@ namespace Real_Estate_Context.Models
         public int? RoleId { get; set; }
 
         [ForeignKey("RoleId")]
-        [InverseProperty("Admins")]
+        [InverseProperty("Users")]
         public virtual Role Role { get; set; }
         [ForeignKey("SupervisorId")]
         [InverseProperty("InverseSupervisor")]
-        public virtual Admin Supervisor { get; set; }
+        public virtual User Supervisor { get; set; }
         [InverseProperty("CreatedByNavigation")]
         public virtual ICollection<CustomerService> CustomerServiceCreatedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
@@ -83,7 +90,7 @@ namespace Real_Estate_Context.Models
         [InverseProperty("CreatedByNavigation")]
         public virtual ICollection<Customer> Customers { get; set; }
         [InverseProperty("Supervisor")]
-        public virtual ICollection<Admin> InverseSupervisor { get; set; }
+        public virtual ICollection<User> InverseSupervisor { get; set; }
         [InverseProperty("AddedByNavigation")]
         public virtual ICollection<Location> LocationAddedByNavigations { get; set; }
         [InverseProperty("EditedByNavigation")]
@@ -106,5 +113,19 @@ namespace Real_Estate_Context.Models
         public virtual ICollection<Role> RoleUpdatedByNavigations { get; set; }
         [InverseProperty("DeletedByNavigation")]
         public virtual ICollection<Visitor> Visitors { get; set; }
+        [InverseProperty("DeletedByNavigation")]
+        public virtual ICollection<WorkFlowContact> WorkFlowContactDeletedByNavigations { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<WorkFlowContact> WorkFlowContactUsers { get; set; }
+        [InverseProperty("CreatedByNavigation")]
+        public virtual ICollection<WorkFlow> WorkFlowCreatedByNavigations { get; set; }
+        [InverseProperty("ActionByAcc")]
+        public virtual ICollection<WorkFlowCycleAssessment> WorkFlowCycleAssessmentActionByAccs { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<WorkFlowCycleAssessment> WorkFlowCycleAssessmentUsers { get; set; }
+        [InverseProperty("DeletedByNavigation")]
+        public virtual ICollection<WorkFlow> WorkFlowDeletedByNavigations { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<WorkFlowFollowingUser> WorkFlowFollowingUsers { get; set; }
     }
 }

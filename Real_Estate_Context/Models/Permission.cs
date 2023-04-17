@@ -40,10 +40,10 @@ namespace Real_Estate_Context.Models
 
         [ForeignKey("CreatedBy")]
         [InverseProperty("PermissionCreatedByNavigations")]
-        public virtual Admin CreatedByNavigation { get; set; }
+        public virtual User CreatedByNavigation { get; set; }
         [ForeignKey("UpdatedBy")]
         [InverseProperty("PermissionUpdatedByNavigations")]
-        public virtual Admin UpdatedByNavigation { get; set; }
+        public virtual User UpdatedByNavigation { get; set; }
         [InverseProperty("Permission")]
         public virtual ICollection<RolesPermission> RolesPermissions { get; set; }
     }

@@ -53,6 +53,6 @@ namespace Real_Estate_Context.Models
         public virtual CustomerService CreatedByNavigation { get; set; }
         [ForeignKey("DeletedBy")]
         [InverseProperty("Visitors")]
-        public virtual Admin DeletedByNavigation { get; set; }
+        public virtual User DeletedByNavigation { get; set; }
     }
 }

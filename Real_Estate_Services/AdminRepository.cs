@@ -3,16 +3,11 @@ using Real_Estate_Context.Context;
 using Real_Estate_Context.Models;
 using Real_Estate_Dtos.DTO;
 using Real_Estate_IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Real_Estate_Services
 {
 
-    public class AdminRepository : Repository<ecommerce_real_estateContext, Admin>, IAdminRepository
+    public class AdminRepository : Repository<ecommerce_real_estateContext, User>, IAdminRepository
     {
         public async Task<List<AdminsTableDto>> getAllAdmins(int pageNumber, int pageSize, string lang)
         {
@@ -20,7 +15,7 @@ namespace Real_Estate_Services
             if (lang == "en")
             {
 
-                result = await (from q in Context.Admins.AsNoTracking()
+                result = await (from q in Context.Users.AsNoTracking()
                              .Where(c => c.IsActive == true && c.IsDeleted != true)
                           select new AdminsTableDto
                           {
@@ -36,7 +31,7 @@ namespace Real_Estate_Services
             else
             {
 
-                result = await (from q in Context.Admins.AsNoTracking()
+                result = await (from q in Context.Users.AsNoTracking()
                              .Where(c => c.IsActive == true && c.IsDeleted != true)
                           select new AdminsTableDto
                           {

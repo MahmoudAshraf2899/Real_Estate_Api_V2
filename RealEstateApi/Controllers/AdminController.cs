@@ -187,7 +187,15 @@ namespace RealEstateApi.Controllers
         }
         #endregion
 
+
+        [HttpGet]
+        [Route("test")]
+        public IActionResult test()
+        {
+            return Ok();
+        }
         #region Authorization && Authentication
+
 
         [MyAuthorize]
         [HttpPost]
