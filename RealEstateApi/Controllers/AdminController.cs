@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using Real_Estate_Context.Context;
+using Real_Estate_Context.Models;
 using Real_Estate_IServices;
 using RealEstateApi.Commands;
 using RealEstateApi.Commands.AdminCommand;
@@ -27,6 +29,8 @@ using RealEstateApi.Queries.Roles;
 using RealEstateApi.Queries.Visitors;
 using RealEstateApi.Services;
 using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace RealEstateApi.Controllers
@@ -575,6 +579,15 @@ namespace RealEstateApi.Controllers
             return Ok(result);
         }
 
+        //Todo :Move To Work With CQRS 
+        [MyAuthorize]
+        [Route("FilterVisitors")]
+        [HttpGet]
+        public async Task<IActionResult> FilterVisitors()
+        {
+            var result = await _visitorRepository.getFilteredVisitors();
+            return Ok(result);
+        }
 
         #endregion
 
@@ -615,7 +628,6 @@ namespace RealEstateApi.Controllers
 
         #endregion
 
-
         #region Reservation
         [MyAuthorize]
         [HttpGet]
@@ -652,6 +664,43 @@ namespace RealEstateApi.Controllers
             }
         }
 
+        #endregion
+
+        #region Old Code
+        //[HttpGet]
+        //[Route("TestFitlerSearch")]
+        //public async Task<IActionResult> TestFitlerSearch([FromQuery] string q, [FromQuery] string field, [FromQuery] string op)
+        //{
+        //    var query = _context.Locations.AsEnumerable();
+
+        //    if (!string.IsNullOrEmpty(q) && !string.IsNullOrEmpty(field) && !string.IsNullOrEmpty(op))
+        //    {
+        //        query = query.Where(BuildFilterExpression<Location>(field, op, q));
+        //    }
+        //    return Ok(query);
+        //}
+        //private static Func<TEntity, bool> BuildFilterExpression<TEntity>(string propertyName, string op, string value)
+        //{
+        //    var param = Expression.Parameter(typeof(TEntity), "entity");
+        //    var property = Expression.Property(param, propertyName);
+        //    var constant = Expression.Constant(value);
+
+        //    Expression body = op switch
+        //    {
+        //        "eq" => Expression.Equal(property, constant),
+        //        "ne" => Expression.NotEqual(property, constant),
+        //        "lt" => Expression.LessThan(property, constant),
+        //        "le" => Expression.LessThanOrEqual(property, constant),
+        //        "gt" => Expression.GreaterThan(property, constant),
+        //        "ge" => Expression.GreaterThanOrEqual(property, constant),
+        //        "cn" => Expression.Call(property, "Contains", null, constant),
+        //        "sw" => Expression.Call(property, "StartsWith", null, constant),
+        //        "ew" => Expression.Call(property, "EndsWith", null, constant),
+        //        _ => throw new ArgumentException($"Invalid operator '{op}'.")
+        //    };
+
+        //    return Expression.Lambda<Func<TEntity, bool>>(body, param).Compile();
+        //} 
         #endregion
 
     }

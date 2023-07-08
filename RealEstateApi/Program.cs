@@ -7,6 +7,7 @@ using Real_Estate_Context.Context;
 using Real_Estate_Dtos.DTO;
 using Real_Estate_IServices;
 using Real_Estate_Services;
+using RealEstateApi.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +73,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<endPointsCounterMiddlware>();
 app.MapControllers();
 
 app.Run();
