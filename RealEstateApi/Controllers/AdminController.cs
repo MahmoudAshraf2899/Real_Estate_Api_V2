@@ -41,58 +41,32 @@ namespace RealEstateApi.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IHttpContextAccessor _accessor;
-        private readonly IConfiguration _config;
         private readonly IAdminRepository _adminRepository;
-        private readonly IProjectsRepository _projectsRepository;
-        private readonly IProjectFeatureRepository _projectFeatureRepository;
-        private readonly IlocationsTypesRepository _locationsTypesRepository;
-        private readonly IPaymentTypeRepository _paymentTypeRepository;
-        private readonly ILocationImageRepository _locationImageRepository;
         private readonly IVisitorRepository _visitorRepository;
-        private readonly IlocationsRepository _locationsRepository;
-        private readonly IRolesRepository _rolesRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly IRolesPermissionsRepository _rolesPermissionsRepository;
-        private readonly IMemoryCache _cache;
         private readonly IMediator _meditor;
-        private readonly ecommerce_real_estateContext _context;
         private int _accountId;
         private string _language;
         private bool? _isSuberAdmin;
         private bool? _isSuperVisor;
         private bool? _isSalesMan;
-        public AdminController(IHttpContextAccessor accessor, IConfiguration config,
+
+        public AdminController(
+            IHttpContextAccessor accessor,
             IAdminRepository adminRepository,
-            IProjectsRepository projectsRepository,
-            IProjectFeatureRepository projectFeatureRepository,
-            IlocationsTypesRepository locationsTypesRepository,
-            IPaymentTypeRepository paymentTypeRepository,
-            ILocationImageRepository locationImageRepository,
             IVisitorRepository visitorRepository,
-            IlocationsRepository locationsRepository,
-            IRolesRepository rolesRepository,
             IPermissionsRepository permissionsRepository,
             IRolesPermissionsRepository rolesPermissionsRepository,
-            IMemoryCache cache,
-            IMediator meditor,
-            ecommerce_real_estateContext context)
+            IMediator meditor
+             )
         {
             _accessor = accessor;
-            _config = config;
             _adminRepository = adminRepository;
-            _projectsRepository = projectsRepository;
-            _projectFeatureRepository = projectFeatureRepository;
-            _locationsTypesRepository = locationsTypesRepository;
-            _paymentTypeRepository = paymentTypeRepository;
-            _locationImageRepository = locationImageRepository;
             _visitorRepository = visitorRepository;
-            _locationsRepository = locationsRepository;
-            _rolesRepository = rolesRepository;
             _permissionsRepository = permissionsRepository;
             _rolesPermissionsRepository = rolesPermissionsRepository;
-            _cache = cache;
             _meditor = meditor;
-            _context = context;
             StringValues languageHeader = "";
             StringValues tokenHeader = "";
             _accessor.HttpContext.Request.Headers.TryGetValue("Lang", out languageHeader);

@@ -1,7 +1,7 @@
 ﻿# Implement Role & Permissions Scenario (Done) 
 # Implement CQRS On Admin Region (Done)
 # Implement Location Reservation Scenario
-# Remove Unneeded Dependecies from Admin Controller
+# Remove Unneeded Dependecies from Admin Controller(Done)
 # Add New Permission For Customer Service [specific to view all reservation ](Done)
 # Add Stored Procedures To Make Filter Search that have arabic diacritics by using [Arabic_Soundex] function
-** We Need To Make it filter More than one column at the same time
+** We Need To Make it filter More than one column at the same time (Done)
