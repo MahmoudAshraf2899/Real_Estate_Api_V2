@@ -5,6 +5,7 @@ namespace Real_Estate_IServices
 {
     public interface IReservationRepository : IRepository<Reservation>
     {
-        Task<List<DtoGetAllReservationsList>> GetAllReservations(int pageNumber, int pageSize , string lang);
+        Task<List<DtoGetAllReservationsList>> GetAllReservations(int pageNumber, int pageSize, string lang);
+        IEnumerable<DtoGetAllReservationsList> GetAllReservationsCompiledQuery(int pageNumber, int pageSize, string lang);
     }
 }

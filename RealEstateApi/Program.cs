@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,7 @@ builder.Services.AddTransient<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddTransient<IRolesPermissionsRepository, RolesPermissionsRepository>();
 builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
 builder.Services.AddSingleton<MemoryCacheService>();
+//builder.Services.AddScoped<endPointsCounterMiddlware>();
 
 //builder.Services.AddHttpClient();
 #endregion
@@ -73,7 +75,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<endPointsCounterMiddlware>();
+//app.UseMiddleware<endPointsCounterMiddlware>();
 app.MapControllers();
 
 app.Run();

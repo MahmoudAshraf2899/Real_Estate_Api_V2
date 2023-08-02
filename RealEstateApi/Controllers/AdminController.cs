@@ -45,6 +45,8 @@ namespace RealEstateApi.Controllers
         private readonly IVisitorRepository _visitorRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly IRolesPermissionsRepository _rolesPermissionsRepository;
+        private readonly IReservationRepository _reservationRepository;
+        private readonly IProjectsRepository _projectRepo;
         private readonly IMediator _meditor;
         private int _accountId;
         private string _language;
@@ -58,6 +60,8 @@ namespace RealEstateApi.Controllers
             IVisitorRepository visitorRepository,
             IPermissionsRepository permissionsRepository,
             IRolesPermissionsRepository rolesPermissionsRepository,
+            IReservationRepository reservationRepository,
+            IProjectsRepository projectRepo,
             IMediator meditor
              )
         {
@@ -66,6 +70,8 @@ namespace RealEstateApi.Controllers
             _visitorRepository = visitorRepository;
             _permissionsRepository = permissionsRepository;
             _rolesPermissionsRepository = rolesPermissionsRepository;
+            _reservationRepository = reservationRepository;
+            _projectRepo = projectRepo;
             _meditor = meditor;
             StringValues languageHeader = "";
             StringValues tokenHeader = "";
@@ -310,11 +316,20 @@ namespace RealEstateApi.Controllers
         [Route("GetAllProjects")]
         public async Task<IActionResult> GetAllProjects(int pageNumber, int pageSize)
         {
+
             var query = new GetAllProjectsQuery(pageNumber, pageSize, _language);
             var result = await _meditor.Send(query);
             return Ok(result);
         }
+        [HttpGet]
+        [Route("GetAllProjectsCompiledQuery")]
+        public IActionResult GetAllProjectsCompiledQuery(int pageNumber, int pageSize)
+        {
 
+            var x = _projectRepo.GetAllProjectsCompiledQuery(pageNumber, pageSize, _language);
+             
+            return Ok(x);
+        }
 
         [MyAuthorize]
         [HttpGet]
@@ -559,6 +574,7 @@ namespace RealEstateApi.Controllers
         [HttpGet]
         public async Task<IActionResult> FilterVisitors()
         {
+            //Todo : Send In Parameter Query String As Dictionary 
             var result = await _visitorRepository.getFilteredVisitors();
             return Ok(result);
         }
@@ -618,6 +634,14 @@ namespace RealEstateApi.Controllers
             {
                 return Unauthorized();
             }
+        }
+
+        [HttpGet]
+        [Route("GetAllReservationsCompiledQuery")]
+        public IActionResult GetAllReservationsCompiledQuery(int pageNumber, int pageSize)
+        {
+            var result = _reservationRepository.GetAllReservationsCompiledQuery(pageNumber, pageSize, _language);
+            return Ok(result);
         }
 
         [MyAuthorize]

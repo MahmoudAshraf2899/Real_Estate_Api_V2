@@ -103,5 +103,30 @@ namespace Real_Estate_Services
             return result;
 
         }
+
+        public IEnumerable<ProjectsTableDto> GetAllProjectsCompiledQuery(int pageNumber, int pageSize, string lang)
+        {
+            ecommerce_real_estateContext dbContext = new ecommerce_real_estateContext(); // Create an instance of the EF context
+
+            var reservationsList = getAllProjectsQuery(dbContext, lang, pageNumber, pageSize);
+            return reservationsList;
+        }
+        private static Func<ecommerce_real_estateContext, string, int, int, List<ProjectsTableDto?>> getAllProjectsQuery =
+          EF.CompileQuery((ecommerce_real_estateContext context, string lang, int pageNumber, int pageSize) =>
+           (from q in context.Projects.AsNoTracking().Where(c => c.IsActive != false && c.DeletedBy == null)
+            let editorName = q.EditedBy != null ? q.EditedByNavigation.UserName : null
+            select new ProjectsTableDto
+            {
+                id = q.Id,
+                adress = q.Address,
+                description = q.Description,
+                nameEn = q.NameEn,
+                noUnits = q.NoUnits ?? 0,
+                editedBy = q.EditedBy,
+                editorName = editorName
+            }).OrderByDescending(c => c.id).Skip(pageNumber * pageSize).Take(pageSize).ToList()
+          );
+
+
     }
 }

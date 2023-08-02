@@ -12,5 +12,7 @@ namespace Real_Estate_IServices
     {
         Task<List<ProjectsTableDto>> getAll(int pageNumber ,int pageSize,string lang);
         Task<ProjectGyIdDto> getById(int id,string lang);
+        IEnumerable<ProjectsTableDto> GetAllProjectsCompiledQuery(int pageNumber, int pageSize, string lang);
+
     }
 }
